@@ -3,7 +3,7 @@
  * Portert fra den verifiserte HTML-appen, inkludert feilrettingen der
  * implisitt IRR nå bruker faktisk kjøpspris (I₀) i stedet for EV.
  */
-import { npvFromT0, irr } from './finance';
+import { irr } from './finance';
 
 export interface WaccInput {
   rf: number;    // risikofri rente (desimal, f.eks. 0.04)
