@@ -8,6 +8,7 @@ import RevenueBuilder from '../components/RevenueBuilder';
 import WorkingCapitalTool from '../components/WorkingCapitalTool';
 import DebtScheduleTool from '../components/DebtScheduleTool';
 import SensitivityPanel from '../components/SensitivityPanel';
+import WaterfallChart from '../components/WaterfallChart';
 
 const ROW_LABELS: { key: keyof PLYearInput; label: string; sign: 1 | -1 }[] = [
   { key: 'rev', label: 'Omsetning', sign: 1 },
@@ -334,6 +335,17 @@ export default function DcfPage() {
               />
             </div>
           </div>
+
+          <WaterfallChart
+            fcf={plResults.map((r) => r.fcf)}
+            wacc={s.wacc}
+            pvTerminal={result.pvTerminal}
+            netDebt={s.netDebt}
+            minority={s.minority}
+            otherAdj={s.otherAdj}
+            equity={result.equity}
+            cur={s.currency}
+          />
 
           <SensitivityPanel
             input={{
