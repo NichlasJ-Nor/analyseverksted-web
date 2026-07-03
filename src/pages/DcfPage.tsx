@@ -10,6 +10,7 @@ import DebtScheduleTool from '../components/DebtScheduleTool';
 import SensitivityPanel from '../components/SensitivityPanel';
 import WaterfallChart from '../components/WaterfallChart';
 import ComparablesTool from '../components/ComparablesTool';
+import { exportDcfToExcel } from '../lib/exportExcel';
 
 const ROW_LABELS: { key: keyof PLYearInput; label: string; sign: 1 | -1 }[] = [
   { key: 'rev', label: 'Omsetning', sign: 1 },
@@ -281,6 +282,24 @@ export default function DcfPage() {
               </p>
             </div>
           )}
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
+            <button className="btn" style={{ color: 'var(--acc)', borderColor: 'var(--acc)' }}
+              onClick={() => exportDcfToExcel({
+                projectName: 'DCF-analyse',
+                currency: s.currency,
+                plResults,
+                wacc: s.wacc,
+                terminalGrowth: s.terminalGrowth,
+                result,
+                netDebt: s.netDebt,
+                minority: s.minority,
+                otherAdj: s.otherAdj,
+                i0: s.i0,
+              })}>
+              Eksporter til Excel
+            </button>
+          </div>
 
           <div className="stats-row">
             <div className="stat accent">
