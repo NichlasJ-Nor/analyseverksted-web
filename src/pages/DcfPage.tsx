@@ -4,6 +4,9 @@ import '../lib/chartSetup';
 import { useDcfStore } from '../store/dcfStore';
 import { calcPLYears, type PLYearInput } from '../calc/pl';
 import { wacc as calcWacc, dcf } from '../calc/dcf';
+import RevenueBuilder from '../components/RevenueBuilder';
+import WorkingCapitalTool from '../components/WorkingCapitalTool';
+import DebtScheduleTool from '../components/DebtScheduleTool';
 
 const ROW_LABELS: { key: keyof PLYearInput; label: string; sign: 1 | -1 }[] = [
   { key: 'rev', label: 'Omsetning', sign: 1 },
@@ -175,6 +178,21 @@ export default function DcfPage() {
           </div>
         </div>
       </div>
+
+      <RevenueBuilder
+        years={s.years.length}
+        onApply={(vals) => vals.forEach((v, i) => s.setYearField(i, 'rev', v))}
+      />
+      <WorkingCapitalTool
+        years={s.years.length}
+        revenues={s.years.map((y) => y.rev)}
+        cogsAbs={s.years.map((y) => Math.abs(y.cogs))}
+        onApply={(dwc) => dwc.forEach((v, i) => s.setYearField(i, 'dwc', v))}
+      />
+      <DebtScheduleTool
+        years={s.years.length}
+        onApplyNetDebt={(finalBalance) => s.setField('netDebt', finalBalance)}
+      />
 
       {/* P&L-tabell */}
       <div className="card">
