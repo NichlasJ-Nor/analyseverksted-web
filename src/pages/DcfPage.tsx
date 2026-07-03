@@ -9,6 +9,7 @@ import WorkingCapitalTool from '../components/WorkingCapitalTool';
 import DebtScheduleTool from '../components/DebtScheduleTool';
 import SensitivityPanel from '../components/SensitivityPanel';
 import WaterfallChart from '../components/WaterfallChart';
+import ComparablesTool from '../components/ComparablesTool';
 
 const ROW_LABELS: { key: keyof PLYearInput; label: string; sign: 1 | -1 }[] = [
   { key: 'rev', label: 'Omsetning', sign: 1 },
@@ -344,6 +345,21 @@ export default function DcfPage() {
             minority={s.minority}
             otherAdj={s.otherAdj}
             equity={result.equity}
+            cur={s.currency}
+          />
+
+          <ComparablesTool
+            lastEbitda={plResults[plResults.length - 1]?.ebitda ?? 0}
+            lastRevenue={plResults[plResults.length - 1]?.rev ?? 0}
+            netDebt={s.netDebt}
+            minority={s.minority}
+            otherAdj={s.otherAdj}
+            dcfEq={result.equity}
+            dcfWacc={s.wacc}
+            dcfG={s.terminalGrowth}
+            fcf={plResults.map((r) => r.fcf)}
+            terminalMethod={s.terminalMethod}
+            exitMultiple={s.exitMultiple}
             cur={s.currency}
           />
 
