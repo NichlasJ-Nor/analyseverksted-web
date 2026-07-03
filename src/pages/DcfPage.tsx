@@ -11,6 +11,7 @@ import SensitivityPanel from '../components/SensitivityPanel';
 import WaterfallChart from '../components/WaterfallChart';
 import ComparablesTool from '../components/ComparablesTool';
 import { exportDcfToExcel } from '../lib/exportExcel';
+import { exportDcfToPptx } from '../lib/exportPptx';
 
 const ROW_LABELS: { key: keyof PLYearInput; label: string; sign: 1 | -1 }[] = [
   { key: 'rev', label: 'Omsetning', sign: 1 },
@@ -298,6 +299,17 @@ export default function DcfPage() {
                 i0: s.i0,
               })}>
               Eksporter til Excel
+            </button>
+            <button className="btn" style={{ color: '#a78bfa', borderColor: '#a78bfa', marginLeft: 8 }}
+              onClick={() => exportDcfToPptx({
+                projectName: 'DCF-analyse',
+                currency: s.currency,
+                plResults,
+                wacc: s.wacc,
+                terminalGrowth: s.terminalGrowth,
+                result,
+              })}>
+              Eksporter til PowerPoint
             </button>
           </div>
 
