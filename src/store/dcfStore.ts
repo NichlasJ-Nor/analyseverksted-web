@@ -11,6 +11,7 @@ const DEFAULT_YEARS: PLYearInput[] = [
 ];
 
 export interface DcfState {
+  id: string | null;
   name: string;
   currency: string;
   years: PLYearInput[];
@@ -31,9 +32,17 @@ export interface DcfState {
   removeYear: () => void;
   setField: <K extends keyof DcfState>(field: K, value: DcfState[K]) => void;
   reset: () => void;
+  loadFromState: (id: string, name: string, state: SerializableDcfState) => void;
 }
 
+/** Feltene som faktisk lagres/gjenopprettes (uten funksjonene i store'en). */
+export type SerializableDcfState = Omit<
+  DcfState,
+  'id' | 'name' | 'setName' | 'setYearField' | 'addYear' | 'removeYear' | 'setField' | 'reset' | 'loadFromState'
+>;
+
 const initial = {
+  id: null as string | null,
   name: 'Ny analyse',
   currency: 'MNOK',
   years: DEFAULT_YEARS,
@@ -63,5 +72,18 @@ export const useDcfStore = create<DcfState>((set) => ({
   removeYear: () =>
     set((s) => ({ years: s.years.length > 1 ? s.years.slice(0, -1) : s.years })),
   setField: (field, value) => set({ [field]: value } as Partial<DcfState>),
-  reset: () => set(initial),
+  reset: () => set({ ...initial }),
+  loadFromState: (id, name, state) => set({ ...state, id, name }),
 }));
+
+/** Plukker ut kun de serialiserbare feltene, klart for lagring i Supabase. */
+export function getSerializableDcfState(s: DcfState): SerializableDcfState {
+  const {
+    currency, years, taxRate, wacc, terminalGrowth, terminalMethod,
+    exitMultiple, netDebt, minority, otherAdj, shares, i0,
+  } = s;
+  return {
+    currency, years, taxRate, wacc, terminalGrowth, terminalMethod,
+    exitMultiple, netDebt, minority, otherAdj, shares, i0,
+  };
+}
