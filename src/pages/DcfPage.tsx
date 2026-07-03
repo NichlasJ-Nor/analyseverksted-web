@@ -7,6 +7,7 @@ import { wacc as calcWacc, dcf } from '../calc/dcf';
 import RevenueBuilder from '../components/RevenueBuilder';
 import WorkingCapitalTool from '../components/WorkingCapitalTool';
 import DebtScheduleTool from '../components/DebtScheduleTool';
+import SensitivityPanel from '../components/SensitivityPanel';
 
 const ROW_LABELS: { key: keyof PLYearInput; label: string; sign: 1 | -1 }[] = [
   { key: 'rev', label: 'Omsetning', sign: 1 },
@@ -263,6 +264,22 @@ export default function DcfPage() {
 
       {result && (
         <>
+          {result.tvPctOfEv > 80 && (
+            <div className="card" style={{
+              borderColor: result.tvPctOfEv > 90 ? 'var(--neg)' : 'var(--warn)',
+              background: result.tvPctOfEv > 90 ? '#2a0a0a' : '#2a1e00',
+            }}>
+              <b style={{ color: result.tvPctOfEv > 90 ? 'var(--neg)' : 'var(--warn)' }}>
+                TV-advarsel: Terminalverdi = {result.tvPctOfEv.toFixed(0)}% av EV
+              </b>
+              <p style={{ fontSize: 12.5, color: 'var(--t-body)', marginTop: 6 }}>
+                {result.tvPctOfEv > 90
+                  ? 'Terminalverdien dominerer fullstendig. Verdsettelsen er ekstremt sensitiv for WACC og g.'
+                  : 'Over 80% av EV stammer fra kontantstrømmer utenfor prognoseperioden. Vurder å forlenge perioden eller sjekk terminal-antagelsene.'}
+              </p>
+            </div>
+          )}
+
           <div className="stats-row">
             <div className="stat accent">
               <div className="lbl">Enterprise Value</div>
@@ -317,6 +334,22 @@ export default function DcfPage() {
               />
             </div>
           </div>
+
+          <SensitivityPanel
+            input={{
+              fcf: plResults.map((r) => r.fcf),
+              wacc: s.wacc,
+              g: s.terminalGrowth,
+              terminalMethod: s.terminalMethod,
+              exitMultiple: s.exitMultiple,
+              lastEbitda: plResults[plResults.length - 1]?.ebitda ?? 0,
+              netDebt: s.netDebt,
+              minority: s.minority,
+              otherAdj: s.otherAdj,
+            }}
+            ev={result.ev}
+            cur={s.currency}
+          />
         </>
       )}
     </div>
