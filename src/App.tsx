@@ -1,14 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './components/ui.css';
 import DcfPage from './pages/DcfPage';
+import InvestPage from './pages/InvestPage';
 import LoginPage from './pages/LoginPage';
 import SaveBar from './components/SaveBar';
 import { useAuthStore } from './store/authStore';
 import { useDcfStore, getSerializableDcfState, type SerializableDcfState } from './store/dcfStore';
+import { useInvestStore, getSerializableInvestState, type SerializableInvestState } from './store/investStore';
+
+type Tool = 'dcf' | 'invest';
 
 function App() {
   const { session, loading, init } = useAuthStore();
   const dcf = useDcfStore();
+  const inv = useInvestStore();
+  const [tool, setTool] = useState<Tool>('dcf');
 
   useEffect(() => { init(); }, [init]);
 
@@ -30,16 +36,43 @@ function App() {
         <h1 style={{ fontSize: 17 }}>Analyseverksted</h1>
         <p style={{ fontSize: 11, color: 'var(--t-mid)', marginTop: 2 }}>Sprint Consulting</p>
       </header>
-      <SaveBar
-        tool="dcf"
-        id={dcf.id}
-        name={dcf.name}
-        onNameChange={dcf.setName}
-        getState={() => getSerializableDcfState(dcf)}
-        onLoad={(id, name, state) => dcf.loadFromState(id, name, state as SerializableDcfState)}
-        onNew={dcf.reset}
-      />
-      <DcfPage />
+
+      <div style={{ display: 'flex', gap: 8, padding: '10px 24px', borderBottom: '1px solid #2e4444' }}>
+        <button className="btn" style={tool === 'dcf' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
+          onClick={() => setTool('dcf')}>DCF / Verdsettelse</button>
+        <button className="btn" style={tool === 'invest' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
+          onClick={() => setTool('invest')}>Investeringsanalyse</button>
+      </div>
+
+      {tool === 'dcf' && (
+        <>
+          <SaveBar
+            tool="dcf"
+            id={dcf.id}
+            name={dcf.name}
+            onNameChange={dcf.setName}
+            getState={() => getSerializableDcfState(dcf)}
+            onLoad={(id, name, state) => dcf.loadFromState(id, name, state as SerializableDcfState)}
+            onNew={dcf.reset}
+          />
+          <DcfPage />
+        </>
+      )}
+
+      {tool === 'invest' && (
+        <>
+          <SaveBar
+            tool="invest"
+            id={inv.id}
+            name={inv.name}
+            onNameChange={inv.setName}
+            getState={() => getSerializableInvestState(inv)}
+            onLoad={(id, name, state) => inv.loadFromState(id, name, state as SerializableInvestState)}
+            onNew={inv.reset}
+          />
+          <InvestPage />
+        </>
+      )}
     </div>
   );
 }
