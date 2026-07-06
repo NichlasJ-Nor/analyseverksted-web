@@ -2,18 +2,21 @@ import { useEffect, useState } from 'react';
 import './components/ui.css';
 import DcfPage from './pages/DcfPage';
 import InvestPage from './pages/InvestPage';
+import PortfolioPage from './pages/PortfolioPage';
 import LoginPage from './pages/LoginPage';
 import SaveBar from './components/SaveBar';
 import { useAuthStore } from './store/authStore';
 import { useDcfStore, getSerializableDcfState, type SerializableDcfState } from './store/dcfStore';
 import { useInvestStore, getSerializableInvestState, type SerializableInvestState } from './store/investStore';
+import { usePortfolioStore, getSerializablePortfolioState, type SerializablePortfolioState } from './store/portfolioStore';
 
-type Tool = 'dcf' | 'invest';
+type Tool = 'dcf' | 'invest' | 'portfolio';
 
 function App() {
   const { session, loading, init } = useAuthStore();
   const dcf = useDcfStore();
   const inv = useInvestStore();
+  const pf = usePortfolioStore();
   const [tool, setTool] = useState<Tool>('dcf');
 
   useEffect(() => { init(); }, [init]);
@@ -42,6 +45,8 @@ function App() {
           onClick={() => setTool('dcf')}>DCF / Verdsettelse</button>
         <button className="btn" style={tool === 'invest' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
           onClick={() => setTool('invest')}>Investeringsanalyse</button>
+        <button className="btn" style={tool === 'portfolio' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
+          onClick={() => setTool('portfolio')}>Portefølje</button>
       </div>
 
       {tool === 'dcf' && (
@@ -71,6 +76,21 @@ function App() {
             onNew={inv.reset}
           />
           <InvestPage />
+        </>
+      )}
+
+      {tool === 'portfolio' && (
+        <>
+          <SaveBar
+            tool="portfolio"
+            id={pf.id}
+            name={pf.name}
+            onNameChange={pf.setName}
+            getState={() => getSerializablePortfolioState(pf)}
+            onLoad={(id, name, state) => pf.loadFromState(id, name, state as SerializablePortfolioState)}
+            onNew={pf.reset}
+          />
+          <PortfolioPage />
         </>
       )}
     </div>
