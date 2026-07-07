@@ -4,6 +4,7 @@ import DcfPage from './pages/DcfPage';
 import InvestPage from './pages/InvestPage';
 import PortfolioPage from './pages/PortfolioPage';
 import MonteCarloPage from './pages/MonteCarloPage';
+import ScenarioPage from './pages/ScenarioPage';
 import LoginPage from './pages/LoginPage';
 import SaveBar from './components/SaveBar';
 import { useAuthStore } from './store/authStore';
@@ -11,8 +12,9 @@ import { useDcfStore, getSerializableDcfState, type SerializableDcfState } from 
 import { useInvestStore, getSerializableInvestState, type SerializableInvestState } from './store/investStore';
 import { usePortfolioStore, getSerializablePortfolioState, type SerializablePortfolioState } from './store/portfolioStore';
 import { useMonteCarloStore, getSerializableMcState, type SerializableMcState } from './store/monteCarloStore';
+import { useScenarioStore, getSerializableScenarioState, type SerializableScenarioState } from './store/scenarioStore';
 
-type Tool = 'dcf' | 'invest' | 'portfolio' | 'montecarlo';
+type Tool = 'dcf' | 'invest' | 'portfolio' | 'montecarlo' | 'scenario';
 
 function App() {
   const { session, loading, init } = useAuthStore();
@@ -20,6 +22,7 @@ function App() {
   const inv = useInvestStore();
   const pf = usePortfolioStore();
   const mc = useMonteCarloStore();
+  const scen = useScenarioStore();
   const [tool, setTool] = useState<Tool>('dcf');
 
   useEffect(() => { init(); }, [init]);
@@ -52,6 +55,8 @@ function App() {
           onClick={() => setTool('portfolio')}>Portefølje</button>
         <button className="btn" style={tool === 'montecarlo' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
           onClick={() => setTool('montecarlo')}>Monte Carlo</button>
+        <button className="btn" style={tool === 'scenario' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
+          onClick={() => setTool('scenario')}>Scenarioanalyse</button>
       </div>
 
       {tool === 'dcf' && (
@@ -111,6 +116,21 @@ function App() {
             onNew={mc.reset}
           />
           <MonteCarloPage />
+        </>
+      )}
+
+      {tool === 'scenario' && (
+        <>
+          <SaveBar
+            tool="scenario"
+            id={scen.id}
+            name={scen.name}
+            onNameChange={scen.setName}
+            getState={() => getSerializableScenarioState(scen)}
+            onLoad={(id, name, state) => scen.loadFromState(id, name, state as SerializableScenarioState)}
+            onNew={scen.reset}
+          />
+          <ScenarioPage />
         </>
       )}
     </div>
