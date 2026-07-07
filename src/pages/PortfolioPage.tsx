@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import '../lib/chartSetup';
 import { usePortfolioStore } from '../store/portfolioStore';
+import Tip from '../components/Tip';
 import {
   evaluatePfProject, checkDependencies, summarizePortfolio, portfolioRateSensitivity,
   capmRanking, budgetOptimisation,
@@ -126,7 +127,13 @@ export default function PortfolioPage() {
         <div className="card-title">Rangering</div>
         <div style={{ overflowX: 'auto' }}>
           <table className="pl-table">
-            <thead><tr><th>Rang</th><th>Prosjekt</th><th>Kategori</th><th>I₀</th><th>NPV</th><th>IRR</th><th>Payback</th><th>Status</th></tr></thead>
+            <thead><tr>
+              <th>Rang</th><th>Prosjekt</th><th>Kategori</th><th>I₀</th>
+              <th><Tip text="Netto nåverdi. Positivt = lønnsomt. Ranger prosjekter etter NPV — høyest NPV er best (ved lik risiko).">NPV</Tip></th>
+              <th><Tip text="Internrente. Sammenlign mot prosjektets eget avkastningskrav: IRR over kravet = lønnsom.">IRR</Tip></th>
+              <th><Tip text="Antall år til investeringen er betalt tilbake (udiskontert). Kortere = lavere risiko." align="left">Payback</Tip></th>
+              <th>Status</th>
+            </tr></thead>
             <tbody>
               {summary.ranked.map((r, i) => (
                 <tr key={r.id} className="calc-row" style={i === 0 ? { background: '#1a3333' } : {}}>

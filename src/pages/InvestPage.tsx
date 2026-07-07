@@ -8,6 +8,7 @@ import {
 import InvestWaterfallChart from '../components/InvestWaterfallChart';
 import { usePortfolioStore } from '../store/portfolioStore';
 import { useUiStore } from '../store/uiStore';
+import Tip from '../components/Tip';
 
 function fmt(v: number, cur: string) {
   if (!isFinite(v)) return '—';
@@ -37,6 +38,30 @@ export default function InvestPage() {
   const sensRows = useMemo(() => rateSensitivity(s.alternatives, s.rate), [s.alternatives, s.rate]);
   const breakevens = useMemo(() => s.alternatives.map((a) => breakevenInvest(a, s.rate)), [s.alternatives, s.rate]);
   const scenarios = useMemo(() => s.alternatives.map((a) => scenarioInvest(a, s.rate)), [s.alternatives, s.rate]);
+
+  const interp = useMemo(() => {
+    const best = ranked[0];
+    const allNeg = results.every((r) => r.npv < 0);
+    const allPos = results.every((r) => r.npv > 0);
+    if (results.length === 1) {
+      const r = results[0];
+      let txt = `${r.name} har NPV = ${fmt(r.npv, s.currency)}. `;
+      txt += r.npv > 0
+        ? `Investeringen er lønnsom — fremtidige kontantstrømmer er verdt mer enn I₀ (${fmt(r.i0, s.currency)}) når diskontert med ${(s.rate * 100).toFixed(1)}%.`
+        : r.npv < 0
+        ? `Investeringen er ulønnsom — fremtidige kontantstrømmer dekker ikke I₀ (${fmt(r.i0, s.currency)}) til ${(s.rate * 100).toFixed(1)}% avkastningskrav.`
+        : 'Investeringen går akkurat i null — IRR = avkastningskrav.';
+      if (r.irr !== null) txt += ` IRR = ${(r.irr * 100).toFixed(1)}% vs. krav ${(s.rate * 100).toFixed(1)}%.`;
+      return txt;
+    }
+    if (allNeg) {
+      return `Ingen av alternativene er lønnsomme til ${(s.rate * 100).toFixed(1)}% avkastningskrav. Vurder å sette ned kravet, reforhandle investering, eller øke inntektspotensialet.`;
+    }
+    let txt = `${best.name} er det beste alternativet med høyest NPV (${fmt(best.npv, s.currency)}).`;
+    txt += allPos ? ` Alle alternativene er lønnsomme, men ${best.name} skaper mest verdi.` : ' Velg dette fremfor alternativer med negativ NPV.';
+    if (best.irr !== null) txt += ` IRR = ${(best.irr * 100).toFixed(1)}% vs. krav ${(s.rate * 100).toFixed(1)}%.`;
+    return txt;
+  }, [results, ranked, s.rate, s.currency]);
 
   const nYears = s.alternatives[0]?.cfs.length ?? 0;
 
@@ -90,11 +115,19 @@ export default function InvestPage() {
         </div>
       </div>
 
+      <div className="interp">{interp}</div>
+
       <div className="card">
         <div className="card-title">Sammenligning</div>
         <div style={{ overflowX: 'auto' }}>
           <table className="pl-table">
-            <thead><tr><th>Alternativ</th><th>NPV</th><th>IRR</th><th>Tilbakebet.</th><th>I₀</th><th>Vurdering</th><th></th></tr></thead>
+            <thead><tr>
+              <th>Alternativ</th>
+              <th><Tip text="Netto nåverdi. Positivt = lønnsomt. Ranger alternativer etter NPV — høyest NPV er best (ved lik risiko).">NPV</Tip></th>
+              <th><Tip text={`Internrente. Sammenlign mot avkastningskravet (${(s.rate * 100).toFixed(1)}%): IRR over kravet = lønnsom.`}>IRR</Tip></th>
+              <th><Tip text="Antall år til du har fått tilbake den initielle investeringen (udiskontert). Kortere = lavere risiko." align="left">Tilbakebet.</Tip></th>
+              <th>I₀</th><th>Vurdering</th><th></th>
+            </tr></thead>
             <tbody>
               {results.map((r, i) => {
                 const isBest = ranked[0].name === r.name && results.length > 1;

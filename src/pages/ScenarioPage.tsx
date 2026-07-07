@@ -38,6 +38,10 @@ export default function ScenarioPage() {
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div className="card">
         <div className="card-title">Scenarioanalyse — Bear / Base / Bull</div>
+        <p className="info">
+          Bygg tre alternative DCF-scenarioer med ulike forutsetninger for FCF, WACC og terminal vekst.
+          Sammenlign Enterprise Value og egenkapitalverdi side om side. Bruk «Generer Bear/Bull fra Base» for å hente utgangspunkt fra Base-scenariet, eller «Synk til Scenarioanalyse» i DCF-fanen for å hente hele DCF-modellen.
+        </p>
         <div className="settings-row" style={{ marginBottom: 14 }}>
           <div className="field"><label>Valuta</label><input value={s.currency} onChange={(e) => s.setCurrency(e.target.value)} style={{ width: 80 }} /></div>
           <div className="field"><label>Netto gjeld</label><input type="number" value={s.netDebt} onChange={(e) => s.setNetDebt(+e.target.value)} style={{ width: 90 }} /></div>

@@ -20,14 +20,15 @@ import { deriveScenariosFromBase } from '../calc/scenario';
 import { useUiStore } from '../store/uiStore';
 import { INDUSTRY_REFERENCES, REF_RF } from '../data/industryData';
 import DcfMonteCarloPanel from '../components/DcfMonteCarloPanel';
+import Tip from '../components/Tip';
 
-const ROW_LABELS: { key: keyof PLYearInput; label: string; sign: 1 | -1 }[] = [
-  { key: 'rev', label: 'Omsetning', sign: 1 },
-  { key: 'cogs', label: 'Varekostnad (COGS)', sign: -1 },
-  { key: 'opex', label: 'Faste driftskostnader', sign: -1 },
-  { key: 'da', label: 'Avskrivninger (D&A)', sign: -1 },
-  { key: 'capex', label: 'CapEx', sign: -1 },
-  { key: 'dwc', label: 'Δ Arbeidskapital', sign: -1 },
+const ROW_LABELS: { key: keyof PLYearInput; label: string; sign: 1 | -1; tip: string }[] = [
+  { key: 'rev', label: 'Omsetning', sign: 1, tip: 'Totale salgsinntekter dette året.\n\nFylles inn for hvert prognoseår. Hentes typisk fra budsjett, historisk regnskap eller markedsanalyse.\n\nEksempel: 300 = 300 MNOK i omsetning.' },
+  { key: 'cogs', label: 'Varekostnad (COGS)', sign: -1, tip: 'Direkte kostnader som varierer med omsetningen — råvarer, underleverandører, direkte lønn.\n\nLegg inn som NEGATIVT tall (f.eks. -150).\n\nBruttomargin = (Omsetning + COGS) / Omsetning. Typisk 30–60% for industri, 60–80% for programvare.' },
+  { key: 'opex', label: 'Faste driftskostnader', sign: -1, tip: 'Kostnader som ikke direkte varierer med salget: administrasjon, salg og markedsføring, FoU, husleie, lederlønninger.\n\nLegg inn som NEGATIVT tall (f.eks. -80).\n\nKalles også SG&A (Selling, General & Administrative).' },
+  { key: 'da', label: 'Avskrivninger (D&A)', sign: -1, tip: 'Regnskapsmessige avskrivninger på anleggsmidler.\n\nLegg inn som NEGATIVT tall. Kan kobles til Aktivaplanen under for å beregne dette automatisk fra CapEx og brukstid.' },
+  { key: 'capex', label: 'CapEx', sign: -1, tip: 'Capital Expenditure — investeringer i varige driftsmidler (maskiner, IT-systemer, bygg, kjøretøy).\n\nLegg inn som NEGATIVT tall (f.eks. -25).\n\nHøy CapEx betyr lavere FCF. Vedlikeholds-CapEx ≈ avskrivninger; vekst-CapEx kommer i tillegg.' },
+  { key: 'dwc', label: 'Δ Arbeidskapital', sign: -1, tip: 'Endring i arbeidskapital = endring i (Kundefordringer + Varelager − Leverandørgjeld).\n\n• Vekst → negativt tall (kapital bindes opp)\n• Kontraksjon → positivt tall (kapital frigjøres)\n\nEr du usikker: bruk 1–3% av omsetningsveksten som tommelfingerregel.' },
 ];
 
 function fmt(v: number, cur: string) {
@@ -130,27 +131,27 @@ export default function DcfPage() {
         </div>
         <div className="settings-row">
           <div className="field">
-            <label>Risikofri rente (%)</label>
+            <label><Tip text="Avkastning på risikofrie statsobligasjoner. Norsk 10-årig statsobligasjon er typisk 3–4%.">Risikofri rente (%)</Tip></label>
             <input type="number" step="0.1" value={waccInputs.rf * 100}
               onChange={(e) => setWaccInputs((w) => ({ ...w, rf: +e.target.value / 100 }))} />
           </div>
           <div className="field">
-            <label>ERP (%)</label>
+            <label><Tip text="Markedets forventede meravkastning utover risikofri rente. Typisk 4–6% for modne markeder som Norge.">ERP (%)</Tip></label>
             <input type="number" step="0.1" value={waccInputs.erp * 100}
               onChange={(e) => setWaccInputs((w) => ({ ...w, erp: +e.target.value / 100 }))} />
           </div>
           <div className="field">
-            <label>Beta</label>
+            <label><Tip text={'Selskapets systematiske risiko relativt til markedet.\n\n• Beta = 1.0: samme risiko som markedet\n• Beta < 1: defensivt selskap (mat, helse)\n• Beta > 1: syklisk/vekstselskap\n\nHentes fra børsnoterte peers eller bransjesektoren.'}>Beta</Tip></label>
             <input type="number" step="0.05" value={waccInputs.beta}
               onChange={(e) => setWaccInputs((w) => ({ ...w, beta: +e.target.value }))} />
           </div>
           <div className="field">
-            <label>Gjeldskostnad (%)</label>
+            <label><Tip text="Renten selskapet betaler på sine lån. Hentes fra lånevilkår eller rentekostnad / gjeld i regnskapet.">Gjeldskostnad (%)</Tip></label>
             <input type="number" step="0.1" value={waccInputs.kd * 100}
               onChange={(e) => setWaccInputs((w) => ({ ...w, kd: +e.target.value / 100 }))} />
           </div>
           <div className="field">
-            <label>Gjeldsandel (%)</label>
+            <label><Tip text={'Gjeldsandel av totalkapital (D/(D+E)).\n\nEksempel: Selskapet har 40 MNOK i gjeld og 60 MNOK i egenkapital → gjeldsandel = 40%.\n\nHøy gjeldsandel øker risiko men kan senke WACC via skattefradrag på renter.'}>Gjeldsandel (%)</Tip></label>
             <input type="number" step="1" value={waccInputs.debtWeight * 100}
               onChange={(e) => setWaccInputs((w) => ({ ...w, debtWeight: +e.target.value / 100 }))} />
           </div>
@@ -277,9 +278,9 @@ export default function DcfPage() {
               </tr>
             </thead>
             <tbody>
-              {ROW_LABELS.map(({ key, label }) => (
+              {ROW_LABELS.map(({ key, label, tip }) => (
                 <tr key={key}>
-                  <td>{label}</td>
+                  <td><Tip text={tip} align="right">{label}</Tip></td>
                   {s.years.map((y, i) => (
                     <td key={i}>
                       <input
@@ -383,11 +384,11 @@ export default function DcfPage() {
 
           <div className="stats-row">
             <div className="stat accent">
-              <div className="lbl">Enterprise Value</div>
+              <div className="lbl"><Tip text={'Totalverdien av selskapet uavhengig av finansieringsstruktur.\n\nEV = PV av alle fremtidige FCF + PV terminalverdi.\n\nInkluderer verdien for både eiere og långivere. For å finne eierens andel: trekk fra netto gjeld.'}>Enterprise Value</Tip></div>
               <div className="val">{fmt(result.ev, s.currency)}</div>
             </div>
             <div className="stat">
-              <div className="lbl">Egenkapitalverdi</div>
+              <div className="lbl"><Tip text={'Verdien som tilfaller aksjonærene.\n\nEgenkapital = EV − Netto gjeld − Minoriteter + Andre justeringer.\n\nDette er den mest relevante verdien ved aksjesalg eller emisjon.'}>Egenkapitalverdi</Tip></div>
               <div className="val">{fmt(result.equity, s.currency)}</div>
             </div>
             <div className="stat">
@@ -395,7 +396,7 @@ export default function DcfPage() {
               <div className="val">{fmt(perShare, s.currency.replace('M', ''))}</div>
             </div>
             <div className={`stat ${result.tvPctOfEv > 80 ? 'warn' : ''}`}>
-              <div className="lbl">PV terminalverdi</div>
+              <div className="lbl"><Tip text="Andel av Enterprise Value som stammer fra terminalverdien (verdien etter siste prognoseår). Over 80% betyr at verdsettelsen er svært sensitiv for WACC og g-antagelsene.">PV terminalverdi</Tip></div>
               <div className="val">{result.tvPctOfEv.toFixed(0)}%</div>
             </div>
             <div className={`stat ${s.i0 > 0 ? (result.npv >= 0 ? 'accent' : 'neg') : ''}`}>

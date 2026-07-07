@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import '../lib/chartSetup';
 import { useMonteCarloStore } from '../store/monteCarloStore';
+import Tip from '../components/Tip';
 import { percentile, mean } from '../calc/finance';
 import {
   runSimulation, computeTornado, computeSpearman, type DistType, type SimMode, type Timing,
@@ -163,10 +164,10 @@ export default function MonteCarloPage() {
         <>
           <div className="stats-row">
             <div className="stat"><div className="lbl">P10 (pessimistisk)</div><div className="val" style={{ color: 'var(--neg)' }}>{fmt(p10, s.currency)}</div></div>
-            <div className="stat accent"><div className="lbl">P50 (median)</div><div className="val">{fmt(p50, s.currency)}</div></div>
-            <div className="stat"><div className="lbl">Gjennomsnitt</div><div className="val">{fmt(avg, s.currency)}</div></div>
-            <div className="stat warn"><div className="lbl">P85 — styringsramme</div><div className="val">{fmt(p85, s.currency)}</div></div>
-            <div className="stat"><div className="lbl">P90 — stresstest</div><div className="val">{fmt(p90, s.currency)}</div></div>
+            <div className="stat accent"><div className="lbl"><Tip text="Median: 50% av simuleringene gir et resultat under dette. Et godt nøytralt anslag — ikke påvirket av ekstreme utfall.">P50 (median)</Tip></div><div className="val">{fmt(p50, s.currency)}</div></div>
+            <div className="stat"><div className="lbl"><Tip text="Gjennomsnitt av alle simulerte utfall. Avviker fra P50 når fordelingen er skjev (typisk positivt skjev for investeringer).">Gjennomsnitt</Tip></div><div className="val">{fmt(avg, s.currency)}</div></div>
+            <div className="stat warn"><div className="lbl"><Tip text="85% av simuleringene gir et resultat under dette. Brukes ofte som styringsramme i offentlige prosjekter (NAV KS2-metodikk)." align="left">P85 — styringsramme</Tip></div><div className="val">{fmt(p85, s.currency)}</div></div>
+            <div className="stat"><div className="lbl"><Tip text="90% av simuleringene gir et resultat under dette. Konservativt stresstest-nivå — bruk dette som maksimalt budsjett eller nedside." align="left">P90 — stresstest</Tip></div><div className="val">{fmt(p90, s.currency)}</div></div>
             <div className={`stat ${negShare > 20 ? 'neg' : ''}`}><div className="lbl">Andel negative utfall</div><div className="val">{negShare.toFixed(1)}%</div></div>
           </div>
 
