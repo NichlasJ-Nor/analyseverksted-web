@@ -7,6 +7,7 @@ import { wacc as calcWacc, dcf } from '../calc/dcf';
 import RevenueBuilder from '../components/RevenueBuilder';
 import WorkingCapitalTool from '../components/WorkingCapitalTool';
 import DebtScheduleTool from '../components/DebtScheduleTool';
+import AssetPlanTool from '../components/AssetPlanTool';
 import SensitivityPanel from '../components/SensitivityPanel';
 import WaterfallChart from '../components/WaterfallChart';
 import ComparablesTool from '../components/ComparablesTool';
@@ -236,6 +237,21 @@ export default function DcfPage() {
       <DebtScheduleTool
         years={s.years.length}
         onApplyNetDebt={(finalBalance) => s.setField('netDebt', finalBalance)}
+      />
+      <AssetPlanTool
+        years={s.years.length}
+        onApplyDa={(daPerYear) => {
+          Object.entries(daPerYear).forEach(([yr, val]) => {
+            const i = +yr - 1; // daPerYear er 1-indeksert (år 1..n), s.years er 0-indeksert
+            if (i >= 0 && i < s.years.length) s.setYearField(i, 'da', -Math.abs(val));
+          });
+        }}
+        onApplyCapex={(capexPerYear) => {
+          Object.entries(capexPerYear).forEach(([yr, val]) => {
+            const i = +yr - 1;
+            if (i >= 0 && i < s.years.length) s.setYearField(i, 'capex', -Math.abs(val));
+          });
+        }}
       />
 
       {/* P&L-tabell */}
