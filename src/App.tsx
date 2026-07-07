@@ -3,20 +3,23 @@ import './components/ui.css';
 import DcfPage from './pages/DcfPage';
 import InvestPage from './pages/InvestPage';
 import PortfolioPage from './pages/PortfolioPage';
+import MonteCarloPage from './pages/MonteCarloPage';
 import LoginPage from './pages/LoginPage';
 import SaveBar from './components/SaveBar';
 import { useAuthStore } from './store/authStore';
 import { useDcfStore, getSerializableDcfState, type SerializableDcfState } from './store/dcfStore';
 import { useInvestStore, getSerializableInvestState, type SerializableInvestState } from './store/investStore';
 import { usePortfolioStore, getSerializablePortfolioState, type SerializablePortfolioState } from './store/portfolioStore';
+import { useMonteCarloStore, getSerializableMcState, type SerializableMcState } from './store/monteCarloStore';
 
-type Tool = 'dcf' | 'invest' | 'portfolio';
+type Tool = 'dcf' | 'invest' | 'portfolio' | 'montecarlo';
 
 function App() {
   const { session, loading, init } = useAuthStore();
   const dcf = useDcfStore();
   const inv = useInvestStore();
   const pf = usePortfolioStore();
+  const mc = useMonteCarloStore();
   const [tool, setTool] = useState<Tool>('dcf');
 
   useEffect(() => { init(); }, [init]);
@@ -47,6 +50,8 @@ function App() {
           onClick={() => setTool('invest')}>Investeringsanalyse</button>
         <button className="btn" style={tool === 'portfolio' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
           onClick={() => setTool('portfolio')}>Portefølje</button>
+        <button className="btn" style={tool === 'montecarlo' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
+          onClick={() => setTool('montecarlo')}>Monte Carlo</button>
       </div>
 
       {tool === 'dcf' && (
@@ -91,6 +96,21 @@ function App() {
             onNew={pf.reset}
           />
           <PortfolioPage />
+        </>
+      )}
+
+      {tool === 'montecarlo' && (
+        <>
+          <SaveBar
+            tool="montecarlo"
+            id={mc.id}
+            name={mc.name}
+            onNameChange={mc.setName}
+            getState={() => getSerializableMcState(mc)}
+            onLoad={(id, name, state) => mc.loadFromState(id, name, state as SerializableMcState)}
+            onNew={mc.reset}
+          />
+          <MonteCarloPage />
         </>
       )}
     </div>
