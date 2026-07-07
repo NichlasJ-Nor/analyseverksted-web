@@ -50,7 +50,7 @@ export default function SaveBar({ tool, id, name, onNameChange, getState, onLoad
   }
 
   return (
-    <div style={{
+    <div className="no-print" style={{
       display: 'flex', alignItems: 'center', gap: 10, padding: '10px 32px',
       background: 'var(--s-bar)', borderBottom: '1px solid var(--l-default)', position: 'relative',
     }}>

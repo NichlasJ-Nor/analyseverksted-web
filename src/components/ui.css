@@ -281,3 +281,49 @@ thead .tip::after {
   margin-bottom: 16px;
   line-height: 1.6;
 }
+
+/* Utskrift (portert/forenklet fra HTML-appens @media print). Skjuler navigasjon/knapper,
+   tvinger lys bakgrunn, og gjør input-felt om til vanlig tekst slik at verdiene
+   fortsatt vises uten skjemakrom. */
+@media print {
+  *, *::before, *::after {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  body { background: #fff !important; color: #111 !important; }
+
+  .no-print, header, .tip-icon,
+  button, .btn, .btn-run {
+    display: none !important;
+  }
+
+  .card {
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+  .card-title, .lbl, .val, td, th, .info, .interp, p, span, div {
+    color: #111 !important;
+  }
+  .stat {
+    background: #f7f7f7 !important;
+    border: 1px solid #ccc !important;
+  }
+  table.pl-table th {
+    border-bottom: 1px solid #999 !important;
+  }
+
+  input, select, textarea {
+    background: transparent !important;
+    border: none !important;
+    color: #111 !important;
+    -webkit-appearance: none;
+    appearance: none;
+    padding: 2px 4px !important;
+  }
+
+  .tip::after {
+    display: none !important;
+  }
+}

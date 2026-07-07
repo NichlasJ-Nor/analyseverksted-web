@@ -46,7 +46,7 @@ function App() {
         <p style={{ fontSize: 11, color: 'var(--t-mid)', marginTop: 2 }}>Sprint Consulting</p>
       </header>
 
-      <div style={{ display: 'flex', gap: 8, padding: '10px 24px', borderBottom: '1px solid #2e4444' }}>
+      <div className="no-print" style={{ display: 'flex', gap: 8, padding: '10px 24px', borderBottom: '1px solid #2e4444' }}>
         <button className="btn" style={tool === 'home' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
           onClick={() => setTool('home')}>Hjem</button>
         <button className="btn" style={tool === 'dcf' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
