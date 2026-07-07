@@ -29,6 +29,17 @@ export default function MonteCarloPage() {
       const r = runSimulation(s.items, s.events, s.dist, s.mode, s.numSims, s.years, s.rate);
       setResult(r);
       setRunning(false);
+      const sorted = Array.from(r.sortedResults);
+      const all = Array.from(r.results);
+      s.setLastSummary({
+        p50: percentile(sorted, 50),
+        p85: percentile(sorted, 85),
+        p90: percentile(sorted, 90),
+        mean: mean(all),
+        n: s.numSims,
+        unit: s.currency,
+        probPos: (all.filter((v) => v >= 0).length / all.length) * 100,
+      });
     }, 10);
   }
 

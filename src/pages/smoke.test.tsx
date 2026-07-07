@@ -6,6 +6,7 @@ import InvestPage from './InvestPage';
 import PortfolioPage from './PortfolioPage';
 import MonteCarloPage from './MonteCarloPage';
 import ScenarioPage from './ScenarioPage';
+import HomePage from './HomePage';
 import { useDcfStore } from '../store/dcfStore';
 import { useInvestStore } from '../store/investStore';
 import { usePortfolioStore } from '../store/portfolioStore';
@@ -21,6 +22,23 @@ afterEach(() => {
   useMonteCarloStore.getState().reset();
   useScenarioStore.getState().reset();
   useUiStore.getState().setTool('dcf');
+});
+
+describe('HomePage', () => {
+  it('rendrer dashboard-kort for DCF, Invest, Portefolje og Scenario uten a kaste', () => {
+    render(<HomePage />);
+    expect(screen.getByText('Analyseresultater')).toBeInTheDocument();
+    expect(screen.getByText('Verdsettelse / DCF')).toBeInTheDocument();
+    expect(screen.getByText('Investeringsanalyse')).toBeInTheDocument();
+    expect(screen.getByText('Prosjektportefølje')).toBeInTheDocument();
+    expect(screen.getByText('Scenarioanalyse')).toBeInTheDocument();
+  });
+
+  it('bytter fane ved klikk pa et kort', () => {
+    render(<HomePage />);
+    fireEvent.click(screen.getByText('Verdsettelse / DCF'));
+    expect(useUiStore.getState().tool).toBe('dcf');
+  });
 });
 
 describe('DcfPage', () => {

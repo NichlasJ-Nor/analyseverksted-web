@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type Tool = 'dcf' | 'invest' | 'portfolio' | 'montecarlo' | 'scenario';
+export type Tool = 'home' | 'dcf' | 'invest' | 'portfolio' | 'montecarlo' | 'scenario';
 
 interface UiState {
   tool: Tool;
@@ -9,6 +9,6 @@ interface UiState {
 
 /** Delt fane-state, slik at én fane kan bytte til en annen (f.eks. «Send til Invest» fra DCF). */
 export const useUiStore = create<UiState>((set) => ({
-  tool: 'dcf',
+  tool: 'home',
   setTool: (tool) => set({ tool }),
 }));

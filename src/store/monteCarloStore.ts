@@ -11,6 +11,16 @@ const DEFAULT_EVENTS: McEvent[] = [
   { name: 'Regulatorisk risiko', prob: 0.2, opt: -10, ml: -30, pess: -60, year: 2 },
 ];
 
+export interface McSummary {
+  p50: number;
+  p85: number;
+  p90: number;
+  mean: number;
+  n: number;
+  unit: string;
+  probPos: number | null;
+}
+
 export interface MonteCarloState {
   id: string | null;
   name: string;
@@ -22,8 +32,10 @@ export interface MonteCarloState {
   rate: number;
   items: McItem[];
   events: McEvent[];
+  lastSummary: McSummary | null; // ikke persistert — kun for hjemskjermens dashboard-kort
 
   setName: (name: string) => void;
+  setLastSummary: (summary: McSummary | null) => void;
   setCurrency: (c: string) => void;
   setNumSims: (n: number) => void;
   setDist: (d: DistType) => void;
@@ -55,11 +67,13 @@ const initial = {
   rate: 0.10,
   items: DEFAULT_ITEMS,
   events: DEFAULT_EVENTS,
+  lastSummary: null as McSummary | null,
 };
 
 export const useMonteCarloStore = create<MonteCarloState>((set) => ({
   ...initial,
   setName: (name) => set({ name }),
+  setLastSummary: (lastSummary) => set({ lastSummary }),
   setCurrency: (currency) => set({ currency }),
   setNumSims: (numSims) => set({ numSims }),
   setDist: (dist) => set({ dist }),

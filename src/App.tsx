@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import './components/ui.css';
+import HomePage from './pages/HomePage';
 import DcfPage from './pages/DcfPage';
 import InvestPage from './pages/InvestPage';
 import PortfolioPage from './pages/PortfolioPage';
@@ -46,6 +47,8 @@ function App() {
       </header>
 
       <div style={{ display: 'flex', gap: 8, padding: '10px 24px', borderBottom: '1px solid #2e4444' }}>
+        <button className="btn" style={tool === 'home' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
+          onClick={() => setTool('home')}>Hjem</button>
         <button className="btn" style={tool === 'dcf' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
           onClick={() => setTool('dcf')}>DCF / Verdsettelse</button>
         <button className="btn" style={tool === 'invest' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
@@ -57,6 +60,8 @@ function App() {
         <button className="btn" style={tool === 'scenario' ? { color: 'var(--acc)', borderColor: 'var(--acc)' } : {}}
           onClick={() => setTool('scenario')}>Scenarioanalyse</button>
       </div>
+
+      {tool === 'home' && <HomePage />}
 
       {tool === 'dcf' && (
         <>
