@@ -16,6 +16,7 @@ import { useInvestStore } from '../store/investStore';
 import { useScenarioStore } from '../store/scenarioStore';
 import { deriveScenariosFromBase } from '../calc/scenario';
 import { useUiStore } from '../store/uiStore';
+import { INDUSTRY_REFERENCES, REF_RF } from '../data/industryData';
 
 const ROW_LABELS: { key: keyof PLYearInput; label: string; sign: 1 | -1 }[] = [
   { key: 'rev', label: 'Omsetning', sign: 1 },
@@ -110,6 +111,19 @@ export default function DcfPage() {
           <button className="btn" onClick={() => s.setField('wacc', waccResult.wacc)}>
             Bruk beregnet WACC ({(waccResult.wacc * 100).toFixed(1)}%) →
           </button>
+        </div>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12 }}>
+          <label style={{ fontSize: 12, color: 'var(--t-mid)' }}>Norske referansedata — velg bransje:</label>
+          <select style={{ minWidth: 220 }} onChange={(e) => {
+            const ref = INDUSTRY_REFERENCES.find((r) => r.key === e.target.value);
+            if (ref) setWaccInputs((w) => ({ ...w, rf: REF_RF, erp: ref.erp, beta: ref.beta }));
+          }}>
+            <option value="">— Velg bransje —</option>
+            {INDUSTRY_REFERENCES.map((r) => (
+              <option key={r.key} value={r.key}>{r.label} (β {r.beta.toFixed(2)}, ERP {(r.erp * 100).toFixed(1)}%)</option>
+            ))}
+          </select>
+          <span style={{ fontSize: 10, color: 'var(--t-mid)' }}>rf = norsk 10-årig statsrente (Norges Bank) · ERP: Fernandez/Damodaran-estimater for Norge</span>
         </div>
         <div className="settings-row">
           <div className="field">

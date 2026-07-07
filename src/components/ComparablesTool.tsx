@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { comparablesValuation, type Comp } from '../calc/comparables';
 import FootballChart from './FootballChart';
+import { INDUSTRY_COMPS, INDUSTRY_REFERENCES } from '../data/industryData';
 
 export default function ComparablesTool({
   lastEbitda, lastRevenue, netDebt, minority, otherAdj,
@@ -59,9 +60,20 @@ export default function ComparablesTool({
               </tbody>
             </table>
           </div>
-          <button className="btn" onClick={() => setComps([...comps, { name: `Peer ${comps.length + 1}`, evEbitda: 10, evRev: 2 }])}>
-            + Legg til selskap
-          </button>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <button className="btn" onClick={() => setComps([...comps, { name: `Peer ${comps.length + 1}`, evEbitda: 10, evRev: 2 }])}>
+              + Legg til selskap
+            </button>
+            <select style={{ minWidth: 200 }} onChange={(e) => {
+              const peers = INDUSTRY_COMPS[e.target.value];
+              if (peers) setComps(peers.map((p) => ({ ...p })));
+            }}>
+              <option value="">— Fyll bransjemultipler —</option>
+              {INDUSTRY_REFERENCES.filter((r) => INDUSTRY_COMPS[r.key]).map((r) => (
+                <option key={r.key} value={r.key}>{r.label}</option>
+              ))}
+            </select>
+          </div>
 
           {result && (
             <div style={{ marginTop: 16 }}>
