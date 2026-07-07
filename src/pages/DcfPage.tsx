@@ -8,6 +8,7 @@ import RevenueBuilder from '../components/RevenueBuilder';
 import WorkingCapitalTool from '../components/WorkingCapitalTool';
 import DebtScheduleTool from '../components/DebtScheduleTool';
 import AssetPlanTool from '../components/AssetPlanTool';
+import HistoricalImportTool from '../components/HistoricalImportTool';
 import SensitivityPanel from '../components/SensitivityPanel';
 import WaterfallChart from '../components/WaterfallChart';
 import ComparablesTool from '../components/ComparablesTool';
@@ -224,6 +225,10 @@ export default function DcfPage() {
         </div>
       </div>
 
+      <HistoricalImportTool
+        years={s.years.length}
+        onApplyRevenue={(vals) => vals.forEach((v, i) => s.setYearField(i, 'rev', v))}
+      />
       <RevenueBuilder
         years={s.years.length}
         onApply={(vals) => vals.forEach((v, i) => s.setYearField(i, 'rev', v))}
