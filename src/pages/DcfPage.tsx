@@ -111,7 +111,7 @@ export default function DcfPage() {
       {/* WACC-kalkulator */}
       <div className="card">
         <div className="card-title">
-          <span>WACC-kalkulator</span>
+          <span>WACC-kalkulator <span className="badge">Avkastningskrav</span></span>
           <button className="btn" onClick={() => s.setField('wacc', waccResult.wacc)}>
             Bruk beregnet WACC ({(waccResult.wacc * 100).toFixed(1)}%) →
           </button>
@@ -263,7 +263,7 @@ export default function DcfPage() {
       {/* P&L-tabell */}
       <div className="card">
         <div className="card-title">
-          <span>Resultatregnskap → Fri kontantstrøm</span>
+          <span>DCF-modell <span className="badge">Diskontert kontantstrøm</span></span>
           <div style={{ display: 'flex', gap: 8 }}>
             <button className="btn" onClick={s.addYear}>+ År</button>
             <button className="btn" onClick={s.removeYear}>− År</button>

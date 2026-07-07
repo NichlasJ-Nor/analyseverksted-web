@@ -178,7 +178,7 @@ export default function MonteCarloPage() {
           )}
 
           <div className="card">
-            <div className="card-title">Sannsynlighetsfordeling (histogram)</div>
+            <div className="card-title"><Tip text="Histogram over alle simulerte utfall. En bred fordeling betyr høy usikkerhet.">Sannsynlighetsfordeling (histogram)</Tip></div>
             <div style={{ height: 240 }}>
               <Bar
                 data={{
@@ -202,7 +202,7 @@ export default function MonteCarloPage() {
           </div>
 
           <div className="card">
-            <div className="card-title">S-kurve — kumulativ sannsynlighet</div>
+            <div className="card-title"><Tip text="Viser sannsynligheten for at resultatet er UNDER en gitt verdi. Les av: 'Det er 85% sannsynlighet for at resultatet er under P85-verdien.' En bratt kurve betyr lav usikkerhet.">S-kurve — kumulativ sannsynlighet</Tip></div>
             <div style={{ height: 220 }}>
               <Line
                 data={{

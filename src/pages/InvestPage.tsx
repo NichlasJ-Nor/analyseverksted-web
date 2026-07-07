@@ -68,7 +68,7 @@ export default function InvestPage() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div className="card">
-        <div className="card-title">Investeringsanalyse — NPV-kalkulator</div>
+        <div className="card-title"><span>Investeringsanalyse — NPV-kalkulator <span className="badge">Netto nåverdi</span></span></div>
         <div className="settings-row" style={{ marginBottom: 14 }}>
           <div className="field"><label>Avkastningskrav (%)</label>
             <input type="number" step="0.1" value={s.rate * 100} onChange={(e) => s.setRate(+e.target.value / 100)} style={{ width: 90 }} />
@@ -223,7 +223,7 @@ export default function InvestPage() {
       </div>
 
       <div className="card">
-        <div className="card-title">Sensitivitetsanalyse — avkastningskrav</div>
+        <div className="card-title"><span>Sensitivitetsanalyse — avkastningskrav <span className="badge">Avkastningskrav</span></span></div>
         <div style={{ overflowX: 'auto' }}>
           <table className="pl-table">
             <thead><tr><th>Avkastningskrav</th>{s.alternatives.map((a, i) => <th key={i}>{a.name}</th>)}</tr></thead>
@@ -244,8 +244,8 @@ export default function InvestPage() {
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-title">Breakeven-analyse</div>
+      <div className="card" style={{ borderLeft: '3px solid #a78bfa' }}>
+        <div className="card-title" style={{ color: '#a78bfa' }}><span>Breakeven-analyse <span className="badge">per alternativ</span></span></div>
         <p style={{ fontSize: 12, color: 'var(--t-mid)', marginBottom: 10 }}>
           Maks kjøpspris (I₀) for NPV = 0, og minimum FCF-andel som dekker investeringen til {(s.rate * 100).toFixed(1)}% avkastningskrav.
         </p>

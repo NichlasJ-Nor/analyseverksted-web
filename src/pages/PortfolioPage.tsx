@@ -39,7 +39,7 @@ export default function PortfolioPage() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div className="card">
-        <div className="card-title">Prosjektportefølje</div>
+        <div className="card-title"><span>Prosjektportefølje <span className="badge">NPV-rangering</span></span></div>
         <div className="settings-row" style={{ marginBottom: 14 }}>
           <div className="field"><label>Avkastningskrav, standard (%)</label>
             <input type="number" step="0.1" value={s.globalRate * 100} onChange={(e) => s.setGlobalRate(+e.target.value / 100)} style={{ width: 90 }} />
@@ -124,7 +124,7 @@ export default function PortfolioPage() {
       </div>
 
       <div className="card">
-        <div className="card-title">Rangering</div>
+        <div className="card-title"><span>Prosjektrangering <span className="badge">NPV-sortert</span></span></div>
         <div style={{ overflowX: 'auto' }}>
           <table className="pl-table">
             <thead><tr>
@@ -239,7 +239,7 @@ export default function PortfolioPage() {
       </div>
 
       <div className="card">
-        <div className="card-title">Sensitivitet — avkastningskrav</div>
+        <div className="card-title"><span>Portefølje-sensitivitet <span className="badge">Avkastningskrav</span></span></div>
         <div style={{ overflowX: 'auto' }}>
           <table className="pl-table">
             <thead><tr><th>Krav</th>{results.map((r) => <th key={r.id}>{r.name}</th>)}<th>Total</th></tr></thead>
@@ -262,7 +262,11 @@ export default function PortfolioPage() {
       </div>
 
       <div className="card">
-        <div className="card-title">Risikojustert rangering (CAPM)</div>
+        <div className="card-title" style={{ color: '#a78bfa' }}>
+          <Tip text="CAPM: r = rf + β × ERP. Hvert prosjekt får et eget avkastningskrav basert på sin systematiske risiko (beta). NPV beregnes på nytt med dette kravet og sammenlignes med standard-rangering.">
+            Risikojustert rangering <span className="badge">CAPM per prosjekt</span>
+          </Tip>
+        </div>
         <div className="settings-row" style={{ marginBottom: 12 }}>
           <div className="field"><label>Risikofri rente (%)</label><input type="number" step="0.1" value={s.rf * 100} onChange={(e) => s.setRf(+e.target.value / 100)} style={{ width: 80 }} /></div>
           <div className="field"><label>Aksjepremie / ERP (%)</label><input type="number" step="0.1" value={s.erp * 100} onChange={(e) => s.setErp(+e.target.value / 100)} style={{ width: 80 }} /></div>
@@ -295,7 +299,7 @@ export default function PortfolioPage() {
 
       {budgetResult && (
         <div className="card" style={{ borderLeft: '3px solid #a78bfa' }}>
-          <div className="card-title" style={{ color: '#a78bfa' }}>Budsjettoptimalisering (knapsack)</div>
+          <div className="card-title" style={{ color: '#a78bfa' }}><span>Budsjettoptimalisering <span className="badge">knapsack</span></span></div>
           <p style={{ fontSize: 12, color: 'var(--t-mid)', marginBottom: 10 }}>
             Budsjett: {fmt(s.budget, s.currency)} · Metode: {budgetResult.method === 'exact' ? 'eksakt (uttømmende søk)' : 'approksimert (PI-rangering)'}
           </p>

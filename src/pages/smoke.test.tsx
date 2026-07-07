@@ -93,7 +93,7 @@ describe('PortfolioPage', () => {
   it('rendrer rangeringstabell med standardprosjekter', () => {
     render(<PortfolioPage />);
     expect(screen.getByText('Total portefølje-NPV')).toBeInTheDocument();
-    expect(screen.getByText('Risikojustert rangering (CAPM)')).toBeInTheDocument();
+    expect(screen.getByText(/Risikojustert rangering/)).toBeInTheDocument();
   });
 });
 

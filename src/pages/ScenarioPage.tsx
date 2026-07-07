@@ -37,7 +37,7 @@ export default function ScenarioPage() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div className="card">
-        <div className="card-title">Scenarioanalyse — Bear / Base / Bull</div>
+        <div className="card-title" style={{ color: '#a78bfa' }}><span>Scenarioanalyse <span className="badge">Bear / Base / Bull</span></span></div>
         <p className="info">
           Bygg tre alternative DCF-scenarioer med ulike forutsetninger for FCF, WACC og terminal vekst.
           Sammenlign Enterprise Value og egenkapitalverdi side om side. Bruk «Generer Bear/Bull fra Base» for å hente utgangspunkt fra Base-scenariet, eller «Synk til Scenarioanalyse» i DCF-fanen for å hente hele DCF-modellen.
