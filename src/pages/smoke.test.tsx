@@ -45,6 +45,13 @@ describe('DcfPage', () => {
     expect(useUiStore.getState().tool).toBe('scenario');
     expect(useScenarioStore.getState().base.fcfs.length).toBe(useDcfStore.getState().years.length);
   });
+
+  it('kjører Monte Carlo på DCF-modellen uten å kaste', () => {
+    render(<DcfPage />);
+    fireEvent.click(screen.getByText('▶ Beregn verdsettelse'));
+    fireEvent.click(screen.getByText(/Monte Carlo på DCF-modellen/));
+    fireEvent.click(screen.getByText(/Kjør .* simuleringer/));
+  });
 });
 
 describe('InvestPage', () => {

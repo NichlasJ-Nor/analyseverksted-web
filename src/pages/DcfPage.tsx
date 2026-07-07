@@ -17,6 +17,7 @@ import { useScenarioStore } from '../store/scenarioStore';
 import { deriveScenariosFromBase } from '../calc/scenario';
 import { useUiStore } from '../store/uiStore';
 import { INDUSTRY_REFERENCES, REF_RF } from '../data/industryData';
+import DcfMonteCarloPanel from '../components/DcfMonteCarloPanel';
 
 const ROW_LABELS: { key: keyof PLYearInput; label: string; sign: 1 | -1 }[] = [
   { key: 'rev', label: 'Omsetning', sign: 1 },
@@ -413,6 +414,16 @@ export default function DcfPage() {
               />
             </div>
           </div>
+
+          <DcfMonteCarloPanel
+            fcf={plResults.map((r) => r.fcf)}
+            wacc={s.wacc}
+            g={s.terminalGrowth}
+            terminalMethod={s.terminalMethod}
+            exitMultiple={s.exitMultiple}
+            lastEbitda={plResults[plResults.length - 1]?.ebitda ?? 0}
+            cur={s.currency}
+          />
 
           <WaterfallChart
             fcf={plResults.map((r) => r.fcf)}
