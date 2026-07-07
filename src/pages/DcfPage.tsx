@@ -12,6 +12,10 @@ import WaterfallChart from '../components/WaterfallChart';
 import ComparablesTool from '../components/ComparablesTool';
 import { exportDcfToExcel } from '../lib/exportExcel';
 import { exportDcfToPptx } from '../lib/exportPptx';
+import { useInvestStore } from '../store/investStore';
+import { useScenarioStore } from '../store/scenarioStore';
+import { deriveScenariosFromBase } from '../calc/scenario';
+import { useUiStore } from '../store/uiStore';
 
 const ROW_LABELS: { key: keyof PLYearInput; label: string; sign: 1 | -1 }[] = [
   { key: 'rev', label: 'Omsetning', sign: 1 },
@@ -46,6 +50,26 @@ export default function DcfPage() {
 
   const [result, setResult] = useState<ReturnType<typeof dcf> | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const setTool = useUiStore((u) => u.setTool);
+
+  function sendEvToInvest() {
+    if (!result) return;
+    const inv = useInvestStore.getState();
+    inv.setAltField(0, 'i0', result.ev);
+    setTool('invest');
+  }
+
+  function syncToScenario() {
+    const derived = deriveScenariosFromBase(s.wacc, s.terminalGrowth, plResults.map((r) => r.fcf));
+    useScenarioStore.setState({
+      netDebt: s.netDebt,
+      shares: s.shares,
+      tvMethod: s.terminalMethod,
+      exitMultiple: s.exitMultiple,
+      ...derived,
+    });
+    setTool('scenario');
+  }
 
   function runDcf() {
     setError(null);
@@ -310,6 +334,14 @@ export default function DcfPage() {
                 result,
               })}>
               Eksporter til PowerPoint
+            </button>
+            <button className="btn" style={{ color: '#e6a817', borderColor: '#e6a817', marginLeft: 8 }}
+              onClick={syncToScenario} title="Synkroniser DCF-modellen til Scenarioanalyse-fanen">
+              → Synk til Scenarioanalyse
+            </button>
+            <button className="btn" style={{ marginLeft: 8 }}
+              onClick={sendEvToInvest} title="Kopier beregnet EV som investeringspris (I₀) til Investeringsanalyse">
+              → Send EV til Invest (I₀)
             </button>
           </div>
 

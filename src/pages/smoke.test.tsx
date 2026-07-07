@@ -11,6 +11,7 @@ import { useInvestStore } from '../store/investStore';
 import { usePortfolioStore } from '../store/portfolioStore';
 import { useMonteCarloStore } from '../store/monteCarloStore';
 import { useScenarioStore } from '../store/scenarioStore';
+import { useUiStore } from '../store/uiStore';
 
 afterEach(() => {
   cleanup();
@@ -19,6 +20,7 @@ afterEach(() => {
   usePortfolioStore.getState().reset();
   useMonteCarloStore.getState().reset();
   useScenarioStore.getState().reset();
+  useUiStore.getState().setTool('dcf');
 });
 
 describe('DcfPage', () => {
@@ -26,6 +28,22 @@ describe('DcfPage', () => {
     render(<DcfPage />);
     fireEvent.click(screen.getByText('▶ Beregn verdsettelse'));
     expect(screen.getByText('Enterprise Value')).toBeInTheDocument();
+  });
+
+  it('sender EV til Invest og bytter fane', () => {
+    render(<DcfPage />);
+    fireEvent.click(screen.getByText('▶ Beregn verdsettelse'));
+    fireEvent.click(screen.getByText('→ Send EV til Invest (I₀)'));
+    expect(useUiStore.getState().tool).toBe('invest');
+    expect(useInvestStore.getState().alternatives[0].i0).toBeGreaterThan(0);
+  });
+
+  it('synker til Scenarioanalyse og bytter fane', () => {
+    render(<DcfPage />);
+    fireEvent.click(screen.getByText('▶ Beregn verdsettelse'));
+    fireEvent.click(screen.getByText('→ Synk til Scenarioanalyse'));
+    expect(useUiStore.getState().tool).toBe('scenario');
+    expect(useScenarioStore.getState().base.fcfs.length).toBe(useDcfStore.getState().years.length);
   });
 });
 
@@ -35,6 +53,14 @@ describe('InvestPage', () => {
     expect(screen.getAllByText('Alternativ A').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Alternativ B').length).toBeGreaterThan(0);
     expect(screen.getByText('Breakeven-analyse')).toBeInTheDocument();
+  });
+
+  it('sender et alternativ til Portefølje og bytter fane', () => {
+    render(<InvestPage />);
+    const before = usePortfolioStore.getState().projects.length;
+    fireEvent.click(screen.getAllByText('→ Portefølje')[0]);
+    expect(useUiStore.getState().tool).toBe('portfolio');
+    expect(usePortfolioStore.getState().projects.length).toBe(before + 1);
   });
 });
 

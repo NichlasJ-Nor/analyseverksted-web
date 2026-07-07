@@ -33,6 +33,7 @@ export interface PortfolioState {
   toggleActive: (id: string) => void;
   toggleDep: (id: string, depId: string) => void;
   addProject: () => void;
+  importProject: (p: { name: string; i0: number; cfs: number[]; cat?: string; rate?: number }) => void;
   removeProject: (id: string) => void;
   reset: () => void;
   loadFromState: (id: string, name: string, state: SerializablePortfolioState) => void;
@@ -86,6 +87,16 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
           id: newId(), name: `Prosjekt ${s.projects.length + 1}`, cat: 'Annet', i0: 50,
           cfs: s.projects[0]?.cfs.map(() => 0) ?? [0, 0, 0, 0],
           rate: s.globalRate, beta: 1, active: true, deps: [], exclGroup: null,
+        },
+      ],
+    })),
+  importProject: (p) =>
+    set((s) => ({
+      projects: [
+        ...s.projects,
+        {
+          id: newId(), name: p.name, cat: p.cat ?? 'Invest-import', i0: p.i0, cfs: p.cfs,
+          rate: p.rate ?? s.globalRate, beta: 1, active: true, deps: [], exclGroup: null,
         },
       ],
     })),

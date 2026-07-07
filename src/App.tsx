@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import './components/ui.css';
 import DcfPage from './pages/DcfPage';
 import InvestPage from './pages/InvestPage';
@@ -13,8 +13,7 @@ import { useInvestStore, getSerializableInvestState, type SerializableInvestStat
 import { usePortfolioStore, getSerializablePortfolioState, type SerializablePortfolioState } from './store/portfolioStore';
 import { useMonteCarloStore, getSerializableMcState, type SerializableMcState } from './store/monteCarloStore';
 import { useScenarioStore, getSerializableScenarioState, type SerializableScenarioState } from './store/scenarioStore';
-
-type Tool = 'dcf' | 'invest' | 'portfolio' | 'montecarlo' | 'scenario';
+import { useUiStore } from './store/uiStore';
 
 function App() {
   const { session, loading, init } = useAuthStore();
@@ -23,7 +22,7 @@ function App() {
   const pf = usePortfolioStore();
   const mc = useMonteCarloStore();
   const scen = useScenarioStore();
-  const [tool, setTool] = useState<Tool>('dcf');
+  const { tool, setTool } = useUiStore();
 
   useEffect(() => { init(); }, [init]);
 

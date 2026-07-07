@@ -6,6 +6,8 @@ import {
   evaluateAlternative, rateSensitivity, breakevenInvest, scenarioInvest,
 } from '../calc/invest';
 import InvestWaterfallChart from '../components/InvestWaterfallChart';
+import { usePortfolioStore } from '../store/portfolioStore';
+import { useUiStore } from '../store/uiStore';
 
 function fmt(v: number, cur: string) {
   if (!isFinite(v)) return '—';
@@ -18,6 +20,13 @@ const ALT_COLORS = ['#52ebb0', '#e6a817', '#5c8a8a', '#e05a52', '#a78bfa', '#3cb
 export default function InvestPage() {
   const s = useInvestStore();
   const [waterfallIdx, setWaterfallIdx] = useState(0);
+  const setTool = useUiStore((u) => u.setTool);
+
+  function sendToPortfolio(altIndex: number) {
+    const a = s.alternatives[altIndex];
+    usePortfolioStore.getState().importProject({ name: a.name, i0: a.i0, cfs: a.cfs, rate: s.rate });
+    setTool('portfolio');
+  }
 
   const results = useMemo(
     () => s.alternatives.map((a) => evaluateAlternative(a, s.rate)),
@@ -85,7 +94,7 @@ export default function InvestPage() {
         <div className="card-title">Sammenligning</div>
         <div style={{ overflowX: 'auto' }}>
           <table className="pl-table">
-            <thead><tr><th>Alternativ</th><th>NPV</th><th>IRR</th><th>Tilbakebet.</th><th>I₀</th><th>Vurdering</th></tr></thead>
+            <thead><tr><th>Alternativ</th><th>NPV</th><th>IRR</th><th>Tilbakebet.</th><th>I₀</th><th>Vurdering</th><th></th></tr></thead>
             <tbody>
               {results.map((r, i) => {
                 const isBest = ranked[0].name === r.name && results.length > 1;
@@ -103,6 +112,12 @@ export default function InvestPage() {
                     <td className="calc-value">{r.payback !== null ? r.payback.toFixed(1) + ' år' : `> ${r.cfs.length} år`}</td>
                     <td className="calc-value">{fmt(r.i0, s.currency)}</td>
                     <td style={{ color: col }}>{verdict}</td>
+                    <td>
+                      <button className="btn" style={{ fontSize: 11, padding: '4px 10px', whiteSpace: 'nowrap' }}
+                        onClick={() => sendToPortfolio(i)} title="Send dette alternativet til Prosjektportefølje">
+                        → Portefølje
+                      </button>
+                    </td>
                   </tr>
                 );
               })}
